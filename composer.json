@@ -1,0 +1,17 @@
+{
+    "name": "safiy/loyaltypointssystem",
+    "autoload": {
+        "psr-4": {
+            "Safiy\\Loyaltypointssystem\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "khadijaabirat",
+            "email": "khadijaabirat@gmail.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "^3.22"
+    }
+}
