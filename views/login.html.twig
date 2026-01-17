@@ -1,14 +1,31 @@
-{% extends 'layouts/base.twig' %}
+ 
+
+{% extends 'layout.html.twig' %}
 
 {% block content %}
+<div class="login-container">
 <h2>Login</h2>
-<form method="post" action="/login">
+
+    {% if error %}
+        <div class="alert alert-danger" style="color: red;">{{ error }}</div>
+    {% endif %}
+
+     {% if app.request.get('success') %}
+        <div class="alert alert-success" style="color: green;">ton compte a etait creé avec success </div>
+    {% endif %}
+
+    <form action="/Loyalty_Points_System/public/login" method="POST">
+        <div class="form-group">
     <label>Email:</label>
-    <input type="email" name="email" required>
-    <br>
+            <input type="email" name="email" required>
+        </div>
+
+        <div class="form-group">
     <label>Password:</label>
-    <input type="password" name="password" required>
-    <br>
+            <input type="password" name="password" required>
+        </div>
+
     <button type="submit">Se connecter</button>
-</form>
+    </form>
+</div>
 {% endblock %}

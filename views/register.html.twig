@@ -1,0 +1,26 @@
+<form action="..." method="POST">
+    
+    {% if error_global %}
+        <div class="alert alert-danger">{{ error_global }}</div>
+    {% endif %}
+
+    <div class="form-group">
+        <label>name:</label>
+        {# value="{{ data.name }}"  #}
+        <input type="text" name="name" value="{{ data.name }}">
+        
+         {% if errors.name %}
+            <span style="color: red; font-size: small;">{{ errors.name }}</span>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ data.email }}">
+        {% if errors.email %}
+            <span style="color: red; font-size: small;">{{ errors.email }}</span>
+        {% endif %}
+    </div>
+
+    <button type="submit">Enregistrer</button>
+</form>
