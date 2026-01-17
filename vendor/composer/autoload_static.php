@@ -17,6 +17,10 @@ class ComposerStaticInit8cc0c411b2e99a16f1474610895ca7e8
     );
 
     public static $prefixLengthsPsr4 = array (
+        'a' =>
+        array (
+            'app\\' => 4,
+        ),
         'T' =>
         array (
             'Twig\\' => 5,
@@ -25,11 +29,14 @@ class ComposerStaticInit8cc0c411b2e99a16f1474610895ca7e8
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
-            'Safiy\\Loyaltypointssystem\\' => 26,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'app\\' =>
+        array (
+            0 => __DIR__ . '/../..' . '/app',
+        ),
         'Twig\\' =>
         array (
             0 => __DIR__ . '/..' . '/twig/twig/src',
@@ -41,10 +48,6 @@ class ComposerStaticInit8cc0c411b2e99a16f1474610895ca7e8
         'Symfony\\Polyfill\\Ctype\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
-        ),
-        'Safiy\\Loyaltypointssystem\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/app',
         ),
     );
 

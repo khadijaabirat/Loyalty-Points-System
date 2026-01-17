@@ -1,0 +1,31 @@
+<?php
+namespace App\Models;
+use App\Core\Database;
+use PDO;
+
+class User{
+    private $db;
+    public function __constract(){
+        $this->db=Database::getConnection();
+    }
+public function findByEmail($email) {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->execute([':email' => $email]);
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $data ? new User($data) : null;
+    }
+public function save(User $user) {
+        $sql = "INSERT INTO users (name, email, password_hash, total_points) 
+                VALUES (:name, :email, :pass, :points)";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'   => $user->name,
+            ':email'  => $user->email,
+            ':pass'   => $user->password_hash,
+            ':points' => $user->total_points
+        ]);
+    }
+
+}

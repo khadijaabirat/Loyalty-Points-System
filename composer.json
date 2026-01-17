@@ -1,10 +1,10 @@
 {
     "name": "safiy/loyaltypointssystem",
-    "autoload": {
-        "psr-4": {
-            "Safiy\\Loyaltypointssystem\\": "app/"
-        }
-    },
+"autoload": {
+    "psr-4": {
+        "app\\": "app/"
+    }
+},
     "authors": [
         {
             "name": "khadijaabirat",

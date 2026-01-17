@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopEasy{% endblock %}</title>
+    <link rel="stylesheet" href="/css/style.css">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="/shop" class="logo">ShopEasy</a>
+            <nav class="nav">
+                <span class="user-info">
+                    {{ user.name }}
+                    <span class="points-badge">{{ user.loyalty_points }} points</span>
+                </span>
+                <a href="/shop/cart" class="cart-link{% if app.current_route == 'cart' %} active{% endif %}">
+                    Panier
+                    {% if cart_count > 0 %}
+                        <span class="cart-count">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 ShopEasy - Système de test pour formation MVC</p>
+            {% block footer_extra %}
+                <a href="/shop/reset" class="reset-link">Réinitialiser la session</a>
+            {% endblock %}
+        </div>
+    </footer>
+
+    {% block javascripts %}{% endblock %}
+</body>
+</html>
