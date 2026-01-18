@@ -1,16 +1,20 @@
 <?php
-class Purchase
+namespace App\Models;
+
+use App\Core\Database;
+use PDO;
+
+class PurchaseRepository
 {
     private $db;
     private $table = 'purchases';
     
-    public function __construct($db)
+    public function __construct()
     {
-        $this->db = $db;
+         $this->db = Database::getConnection();
     }
     
-    // Méthode existante
-    public function create($data)
+     public function create($data)
     {
         $sql = "INSERT INTO {$this->table} (user_id, total_amount, status, created_at) 
                 VALUES (:user_id, :total_amount, :status, NOW())";
@@ -22,12 +26,10 @@ class Purchase
             ':status' => $data['status']
         ]);
         
-        return $this->db->lastInsertId();
+         return $this->db->lastInsertId();
     }
     
-    
-    // Méthode existante
-    public function getUserPurchases($userId)
+     public function getUserPurchases($userId)
     {
         $sql = "SELECT * FROM {$this->table} 
                 WHERE user_id = :user_id 
@@ -38,6 +40,4 @@ class Purchase
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-    // TODO: Ajouter d'autres méthodes selon les besoins
 }

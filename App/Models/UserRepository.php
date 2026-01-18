@@ -29,5 +29,9 @@ public function save(User $user) {
             ':points' => $user->total_points
         ]);
     }
-
+public function updatePoints($userId, $points) {
+    $sql = "UPDATE users SET total_points = total_points + :points WHERE id = :id";
+    $stmt = $this->db->prepare($sql);
+    return $stmt->execute([':points' => $points, ':id' => $userId]);
+}
 }

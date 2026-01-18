@@ -41,7 +41,6 @@ class PurchaseService
     }
     
      private function calculatePoints($amount)
-    { 
-          return floor($amount / 100) * 10;
+    {  return floor($amount / 100) * 10;
     }
 }

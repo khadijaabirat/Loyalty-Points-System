@@ -26,7 +26,11 @@ switch ($url) {
     case 'register':
         echo $twig->render('views/register.html.twig');
         break;
-
+ case 'dashboard':
+    $userRepo = new \App\Models\UserRepository();
+    $controller = new \App\Controllers\DashboardController($twig, $userRepo);
+    $controller->index();
+    break;
     default:
         header("HTTP/1.0 404 Not Found");
         echo "404 - page invalid";
