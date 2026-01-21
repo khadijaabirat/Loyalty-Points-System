@@ -1,17 +1,16 @@
 <?php
 namespace App\Controllers;
 
-use App\Repositories\User;
-use App\Repositories\UserRepository;
-use App\Core\Validator;
+ use App\Core\Validator;
+use App\Services\AuthService;
 
 class AuthController {
-    private $userRepo;
-    private $twig;
-
-public function __construct($twig, UserRepository $userRepo) {
+     private $twig;
+    private $authService;
+public function __construct($twig, AuthService $authService) {
         $this->twig = $twig;
-        $this->userRepo = $userRepo;
+     $this->authService = $authService;
+
     }
 
     public function showRegister() {

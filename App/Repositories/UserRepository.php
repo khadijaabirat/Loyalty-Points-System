@@ -5,9 +5,10 @@ use App\Models\User;
 use PDO;
 class UserRepository {
     private $db;
-    public function __constract(){
-        $this->db=Database::getConnection();
-    }
+public function __construct(PDO $db) {
+    $this->db = $db;
+}
+
 public function findByEmail($email) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute([':email' => $email]);

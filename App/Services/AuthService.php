@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 use App\Models\User;
 
 class AuthService {

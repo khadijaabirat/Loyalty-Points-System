@@ -8,6 +8,9 @@ use App\Repositories\UserRepository;
 use App\Repositories\PurchaseRepository;
 use App\Repositories\ProductRepository;
 use App\Models\Cart;
+use App\Services\AuthService;
+use App\Controllers\AuthController;
+
 
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -20,7 +23,8 @@ $db = Database::getConnection();
 $userRepo = new UserRepository($db);
 $purchaseRepo = new PurchaseRepository($db);
 $purchaseService = new PurchaseService($purchaseRepo, $userRepo);
-$cart = new Cart();
+$authService = new AuthService($userRepo);
+ $cart = new Cart();
 $productRepo = new ProductRepository();
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : '/';
 
@@ -30,15 +34,27 @@ case '/':
         $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
     $controller->index();
     break;
-    case 'login':
-        $authController = new \App\Controllers\AuthController($twig, $userRepo);
-       $authController->showLogin();
-        break;
+case 'login':
+    $authController = new AuthController($twig, $authService);
 
-    case 'register':
-        $authController = new \App\Controllers\AuthController($twig, $userRepo);
-$authController->showRegister();
-        break;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $authController->handleLogin();
+    } else {
+        $authController->showLogin();
+    }
+    break;
+
+case 'register':
+    $authController = new AuthController($twig, $authService);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $authController->handleRegister();
+    } else {
+        $authController->showRegister();
+    }
+    break;
+
+
  case 'dashboard':
     $controller = new \App\Controllers\DashboardController($twig, $userRepo);
     $controller->index();
