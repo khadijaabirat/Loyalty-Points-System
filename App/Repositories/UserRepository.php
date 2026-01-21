@@ -1,11 +1,9 @@
 <?php
-namespace App\Models;
-
-use App\Models\User;
+namespace App\Repositories;
 use App\Core\Database;
+use App\Models\User;
 use PDO;
-
-class User{
+class UserRepository {
     private $db;
     public function __constract(){
         $this->db=Database::getConnection();

@@ -1,38 +1,85 @@
 <?php
+
 require_once __DIR__ . '/../vendor/autoload.php';
-
 use App\Core\Database;
-try {
-    $db = Database::getConnection();
-} catch (Exception $e) {
-    echo "erreur: " . $e->getMessage();
-}
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../views');
-$twig = new \Twig\Environment($loader, [
-    'cache' => false,
-]);  
+use App\Controllers\ShopController;
+use App\Services\PurchaseService;
+use App\Repositories\UserRepository;
+use App\Repositories\PurchaseRepository;
+use App\Repositories\ProductRepository;
+use App\Models\Cart;
 
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+session_start();
+
+$loader = new  FilesystemLoader(__DIR__ . '/../views');
+$twig = new Environment($loader);
+
+$db = Database::getConnection();
+$userRepo = new UserRepository($db);
+$purchaseRepo = new PurchaseRepository($db);
+$purchaseService = new PurchaseService($purchaseRepo, $userRepo);
+$cart = new Cart();
+$productRepo = new ProductRepository();
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : '/';
 
 switch ($url) {
-    case '/':
-        echo $twig->render('home.html.twig', ['title' => 'home']);
-        break;
-
+case '/':
+    case 'shop':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+    $controller->index();
+    break;
     case 'login':
-        echo $twig->render('views/login.html.twig');
+        $authController = new \App\Controllers\AuthController($twig, $userRepo);
+       $authController->showLogin();
         break;
 
     case 'register':
-        echo $twig->render('views/register.html.twig');
+        $authController = new \App\Controllers\AuthController($twig, $userRepo);
+$authController->showRegister();
         break;
  case 'dashboard':
-    $userRepo = new \App\Models\UserRepository();
     $controller = new \App\Controllers\DashboardController($twig, $userRepo);
     $controller->index();
-    break;
+    break;         
+    case 'shop/cart':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->cart();
+        break;
+
+    case 'shop/add-to-cart':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->addToCart();
+        break;
+
+    case 'shop/update-cart':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->updateCart();
+        break;
+
+case 'shop/remove-from-cart':
+            $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->removeFromCart();
+        break;
+
+    case 'shop/checkout':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->checkout();
+        break;
+
+    case 'shop/process-checkout':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->processCheckout();
+        break;
+
+    case 'shop/purchase-result':
+        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+        $controller->purchaseResult();
+        break;
+
     default:
         header("HTTP/1.0 404 Not Found");
-        echo "404 - page invalid";
+        echo "404 - Page non valide";
         break;
 }

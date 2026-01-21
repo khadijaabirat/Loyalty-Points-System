@@ -2,7 +2,7 @@
 namespace App\Models ;
 
 class User{
-public ?int $id;
+    public ?int $id;
     public $name;
     public $email;
     public $password_hash;

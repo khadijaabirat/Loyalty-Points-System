@@ -10,7 +10,7 @@ class Database {
     public static function getConnection() {
         if (self::$instance === null) {
             $host = 'localhost';
-            $db   = 'shopeasy_db';  
+            $db   = 'loyalty_points_system';  
             $user = 'root';     
             $pass = '';           
 

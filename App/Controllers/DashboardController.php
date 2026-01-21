@@ -14,6 +14,7 @@ class DashboardController {
     }
     public function index() {
         Auth::requireLogin();
+        
          $user = $this->userRepo->findById($_SESSION['user_id']);
 
          echo $this->twig->render('dashboard/index.html.twig', [
