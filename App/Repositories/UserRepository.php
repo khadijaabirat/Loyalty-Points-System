@@ -8,6 +8,13 @@ class UserRepository {
 public function __construct(PDO $db) {
     $this->db = $db;
 }
+public function findById(int $id): ?User {
+    $stmt = $this->db->prepare("SELECT * FROM users WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $data ? new User($data) : null;
+}
 
 public function findByEmail($email) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");

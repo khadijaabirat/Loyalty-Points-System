@@ -2,7 +2,7 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
-use App\Models\UserRepository;
+use App\Repositories\UserRepository;
 
 class DashboardController {
     private $userRepo;
