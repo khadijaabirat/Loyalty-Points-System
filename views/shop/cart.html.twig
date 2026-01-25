@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends './layouts/base.twig' %}
 
 {% block title %}ShopEasy - Panier{% endblock %}
 
@@ -9,7 +9,7 @@
         <div class="empty-cart">
             <p class="empty-cart-icon">Panier vide</p>
             <p>Votre panier est vide</p>
-            <a href="/shop" class="btn btn-primary">Continuer vos achats</a>
+            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary">Continuer vos achats</a>
         </div>
     {% else %}
         <div class="cart-content">

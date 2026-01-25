@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends './layouts/base.twig' %}
 
 {% block title %}ShopEasy - Paiement{% endblock %}
 
@@ -16,10 +16,10 @@
             <h2>Informations de paiement</h2>
             <p class="form-note">Simulation de paiement (données non enregistrées)</p>
             
-            <form action="/shop/process-checkout" method="POST" class="checkout-form">
+            <form action="/Loyalty_Points_System/public/shop/process-checkout" method="POST" class="checkout-form">
                 <div class="form-group">
                     <label for="card_name">Nom sur la carte</label>
-                    <input type="text" id="card_name" name="card_name" placeholder="Jean Dupont" required>
+                    <input type="text" id="card_name" name="card_name" placeholder="NOM PRENOM" required>
                 </div>
                 
                 <div class="form-group">
@@ -72,7 +72,7 @@
                 <p>Après cet achat: <strong>{{ user.loyalty_points + loyalty_points }} points</strong></p>
             </div>
 
-            <a href="/shop/cart" class="btn btn-secondary btn-full">Modifier le panier</a>
+            <a href="/Loyalty_Points_System/public/shop/cart" class="btn btn-secondary btn-full">Modifier le panier</a>
         </div>
     </div>
 {% endblock %}

@@ -62,4 +62,15 @@ $errors = Validator::validateLogin($_POST);
         ]);
     }
 }
+public function logout(): void
+{
+     $_SESSION = [];
+
+     if (session_status() === PHP_SESSION_ACTIVE) {
+        session_destroy();
+    }
+
+     header('Location: /Loyalty_Points_System/public/login');
+    exit;
+}
 }

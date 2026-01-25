@@ -94,26 +94,36 @@ public function removeFromCart(): void
             'cart_count' => $this->cart->getCount()
         ]);
     }
-
-     public function processCheckout(): void
-    {
-        Auth::requireLogin();
+public function processCheckout(): void
+{
+    \App\Core\Auth::requireLogin();
+    
+    try {
+        $userId = $_SESSION['user_id'];
+        $cartItems = $this->cart->getItems();
+        $total = $this->cart->getTotal();
         
-        try {
-             $result = $this->purchaseService->processPurchase(
-                $_SESSION['user_id'], 
-                $this->cart->getItems()
-            );
+         $userBefore = $this->userRepo->findById($userId);
+$previousPoints = $userBefore->loyalty_points ?? 0;
+         $result = $this->purchaseService->processPurchase($userId, $cartItems);
 
-             $_SESSION['last_purchase'] = $result;
-            $this->cart->clear();
+        $_SESSION['last_purchase'] = [
+    'items'           => $cartItems,
+    'total'           => $total,
+    'points_earned'   => $result['points_earned'],
+    'previous_points' => $previousPoints,
+    'new_points'      => $previousPoints + $result['points_earned'],
+    'date'            => date('d/m/Y H:i')
+];
 
-            $this->redirect('shop/purchase-result');
-        } catch (\Exception $e) {
-            $_SESSION['checkout_error'] = $e->getMessage();
-            $this->redirect('shop/checkout');
-        }
+        $this->cart->clear();
+        $this->redirect('shop/purchase-result');
+
+    } catch (\Exception $e) {
+        $_SESSION['checkout_error'] = $e->getMessage();
+        $this->redirect('shop/checkout');
     }
+}
 
     public function purchaseResult(): void
     {
@@ -125,12 +135,17 @@ public function removeFromCart(): void
         ]);
     }
 
-     private function getCurrentUser() {
-        return isset($_SESSION['user_id']) ? $this->userRepo->findById($_SESSION['user_id']) : null;
-    }
+ 
 
     private function redirect($path) {
         header("Location: /Loyalty_Points_System/public/" . $path);
         exit;
     }
+
+ private function getCurrentUser() {
+    if (isset($_SESSION['user_id'])) {
+         return $this->userRepo->findById($_SESSION['user_id']);
+    }
+    return null;
+}
 }

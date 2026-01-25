@@ -8,23 +8,31 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <a href="/shop" class="logo">ShopEasy</a>
-            <nav class="nav">
+<header class="header">
+    <div class="container">
+        <a href="/Loyalty_Points_System/public/shop" class="logo">ShopEasy</a>
+        <nav class="nav">
+            {% if user %}
                 <span class="user-info">
-                    {{ user.name }}
-                    <span class="points-badge">{{ user.loyalty_points }} points</span>
+                    <strong>{{ user.name }}</strong>
+                    <span class="points-badge" title="Votre solde de points">
+                        ⭐ {{  user.total_points|default(0) }} points
+                    </span>
                 </span>
-                <a href="/shop/cart" class="cart-link{% if app.current_route == 'cart' %} active{% endif %}">
-                    Panier
-                    {% if cart_count > 0 %}
-                        <span class="cart-count">{{ cart_count }}</span>
-                    {% endif %}
-                </a>
-            </nav>
-        </div>
-    </header>
+                <a href="/Loyalty_Points_System/public/logout" class="cart-link" style="margin-left: 10px;">Déconnexion</a>
+            {% else %}
+                <a href="/Loyalty_Points_System/public/login">Connexion</a>
+            {% endif %}
+
+            <a href="/Loyalty_Points_System/public/shop/cart" class="cart-link">
+                Panier
+                {% if cart_count > 0 %}
+                    <span class="cart-count">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+        </nav>
+    </div>
+</header>
 
     <main class="main">
         <div class="container">

@@ -1,69 +1,68 @@
-{% extends 'base.html.twig' %}
+{% extends './layouts/base.twig' %}
 
 {% block title %}ShopEasy - Commande confirmée{% endblock %}
 
 {% block content %}
-    <div class="purchase-result">
-        <div class="success-icon">Succès</div>
-        <h1>Commande confirmée !</h1>
-        <p class="success-message">Merci pour votre achat, {{ user.name }} !</p>
+<div class="purchase-result">
+    {% if purchase is defined and purchase is not null %}
+        <div class="success-icon" style="text-align: center; font-size: 3rem;">✅ Success</div>
+        <h1 style="text-align: center;">Commande confirmée !</h1>
+        <p class="success-message" style="text-align: center;">Merci pour votre achat, {{ user.name }} !</p>
 
         <div class="result-card">
             <h2>Détails de votre commande</h2>
             <p class="order-date">Date: {{ purchase.date }}</p>
             
-            <table class="result-table">
+            <table class="result-table" border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                 <thead>
-                    <tr>
+                    <tr style="background-color: #f8f9fa;">
                         <th>Produit</th>
                         <th>Quantité</th>
-                        <th>Prix</th>
+                        <th>Prix Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in purchase.items %}
                         <tr>
                             <td>{{ item.name }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ (item.price * item.quantity)|number_format(2, '.', ' ') }} $</td>
+                            <td style="text-align: center;">{{ item.quantity }}</td>
+                            <td style="text-align: right;">{{ (item.price * item.quantity)|number_format(2, '.', ' ') }} $</td>
                         </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="2"><strong>Total payé</strong></td>
-                        <td><strong>{{ purchase.total|number_format(2, '.', ' ') }} $</strong></td>
+                    <tr style="font-weight: bold;">
+                        <td colspan="2" style="text-align: right;">Total payé</td>
+                        <td style="text-align: right;">{{ purchase.total|number_format(2, '.', ' ') }} $</td>
                     </tr>
                 </tfoot>
             </table>
         </div>
 
-        <div class="points-result-card">
+        <div class="points-result-card" style="margin-top: 30px; padding: 20px; border: 1px dashed #28a745;">
             <h2>Points de fidélité</h2>
             
             <div class="points-summary">
-                <div class="points-item">
-                    <span class="points-label">Points gagnés avec cet achat:</span>
-                    <span class="points-value earned">+{{ purchase.points_earned }} points</span>
-                </div>
-                <div class="points-item">
-                    <span class="points-label">Ancien solde:</span>
-                    <span class="points-value">{{ purchase.previous_points }} points</span>
-                </div>
-                <div class="points-item highlight">
-                    <span class="points-label">Nouveau solde:</span>
-                    <span class="points-value new-balance">{{ purchase.new_points }} points</span>
-                </div>
+                <p>Points gagnés: <strong style="color: #28a745;">+{{ purchase.points_earned }} points</strong></p>
+                <p>Ancien solde: {{ purchase.previous_points }} points</p>
+                <p><strong>Nouveau solde: {{ purchase.new_points }} points</strong></p>
             </div>
 
-            <p class="points-calculation">
+            <p class="points-calculation" style="font-size: 0.9rem; color: #666;">
                 Calcul: {{ purchase.total|number_format(2, '.', ' ') }} $ / 100 = {{ (purchase.total / 100)|round(0, 'floor') }} tranches x 10 = <strong>{{ purchase.points_earned }} points</strong>
             </p>
         </div>
 
-        <div class="result-actions">
-            <a href="/shop" class="btn btn-primary btn-large">Continuer mes achats</a>
-            <a href="/shop/reset" class="btn btn-secondary">Réinitialiser la session</a>
+        <div class="result-actions" style="margin-top: 30px; display: flex; gap: 10px;">
+            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary">Continuer mes achats</a>
+            <a href="/Loyalty_Points_System/public/dashboard" class="btn btn-secondary">Voir mon profil</a>
         </div>
-    </div>
+    {% else %}
+        <div class="alert alert-warning" style="text-align: center; padding: 50px;">
+            <h2>Oops!</h2>
+            <p>Aucune donnée de commande récente trouvée.</p> 
+            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary">Retour à la boutique</a>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

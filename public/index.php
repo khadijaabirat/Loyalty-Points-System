@@ -27,8 +27,12 @@ $authService = new AuthService($userRepo);
  $cart = new Cart();
 $productRepo = new ProductRepository();
 $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : '/';
+ if (isset($_SESSION['user_id'])) {
+    $currentUser = $userRepo->findById($_SESSION['user_id']);
+    $twig->addGlobal('user', $currentUser);
+}
 
-switch ($url) {
+ switch ($url) {
 case '/':
     case 'shop':
         $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
@@ -54,7 +58,10 @@ case 'register':
     }
     break;
 
-
+case 'logout':
+     $authController = new \App\Controllers\AuthController($twig, $authService);
+    $authController->logout();
+    break;
  case 'dashboard':
     $controller = new \App\Controllers\DashboardController($twig, $userRepo);
     $controller->index();
