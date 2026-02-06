@@ -16,7 +16,7 @@
             <h2>Informations de paiement</h2>
             <p class="form-note">Simulation de paiement (données non enregistrées)</p>
             
-            <form action="/Loyalty_Points_System/public/shop/process-checkout" method="POST" class="checkout-form">
+            <form action="/Loyalty_Points_System/public/shop/process-checkout" method="POST" class="checkout-form" id="checkoutForm">
                 <div class="form-group">
                     <label for="card_name">Nom sur la carte</label>
                     <input type="text" id="card_name" name="card_name" placeholder="NOM PRENOM" required>
@@ -38,8 +38,24 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-large btn-full">
-                    Payer {{ cart_total|number_format(2, '.', ' ') }} $
+                 <div class="loyalty-usage-section" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #007bff;">
+                    <h4 style="margin-top: 0; color: #007bff;"> Utiliser vos points ?</h4>
+                    
+                    {% if user.total_points > 0 %}
+                        <div class="form-group-checkbox" style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="use_points" name="use_points" value="1" data-points="{{ user.total_points }}" style="width: 20px; height: 20px; cursor: pointer;">
+                            <label for="use_points" style="font-weight: bold; cursor: pointer;">
+                                Utiliser mes <strong>{{ user.total_points }}</strong> points 
+                                <span class="text-muted">(Réduction de {{ user.total_points|number_format(2) }} $)</span>
+                            </label>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Vous n'avez pas encore de points à utiliser.</p>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large btn-full" id="payButton">
+                    Payer <span id="displayTotal">{{ cart_total|number_format(2, '.', ' ') }}</span> $
                 </button>
             </form>
         </div>
@@ -68,8 +84,8 @@
             </div>
 
             <div class="current-balance">
-                <p>Votre solde actuel: <strong>{{ user.loyalty_points }} points</strong></p>
-                <p>Après cet achat: <strong>{{ user.loyalty_points + loyalty_points }} points</strong></p>
+                <p>Votre solde actuel: <strong>{{ user.total_points }} points</strong></p>
+                <p>Après cet achat: <strong>{{ user.total_points + loyalty_points }} points</strong></p>
             </div>
 
             <a href="/Loyalty_Points_System/public/shop/cart" class="btn btn-secondary btn-full">Modifier le panier</a>
@@ -77,4 +93,22 @@
     </div>
 {% endblock %}
 
-{% block footer_extra %}{% endblock %}
+{% block footer_extra %}
+<script>
+     const checkbox = document.getElementById('use_points');
+    const displayTotal = document.getElementById('displayTotal');
+    const originalTotal = parseFloat("{{ cart_total }}");
+
+    if(checkbox) {
+        checkbox.addEventListener('change', function() {
+            let points = parseFloat(this.getAttribute('data-points'));
+            if (this.checked) {
+                let newTotal = Math.max(0, originalTotal - points);
+                displayTotal.innerText = newTotal.toFixed(2);
+            } else {
+                displayTotal.innerText = originalTotal.toFixed(2);
+            }
+        });
+    }
+</script>
+{% endblock %}

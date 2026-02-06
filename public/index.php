@@ -22,7 +22,7 @@ $twig = new Environment($loader);
 $db = Database::getConnection();
 $userRepo = new UserRepository($db);
 $purchaseRepo = new PurchaseRepository($db);
-$purchaseService = new PurchaseService($purchaseRepo, $userRepo);
+$purchaseService = new PurchaseService($purchaseRepo, $userRepo,$db);
 $authService = new AuthService($userRepo);
  $cart = new Cart();
 $productRepo = new ProductRepository();
@@ -35,7 +35,7 @@ $url = isset($_GET['url']) ? rtrim($_GET['url'], '/') : '/';
  switch ($url) {
 case '/':
     case 'shop':
-        $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
+    $controller = new ShopController($twig, $purchaseService, $userRepo,$cart,$productRepo);
     $controller->index();
     break;
 case 'login':

@@ -97,31 +97,36 @@ public function removeFromCart(): void
 public function processCheckout(): void
 {
     \App\Core\Auth::requireLogin();
-    
-    try {
+   try {
         $userId = $_SESSION['user_id'];
         $cartItems = $this->cart->getItems();
-        $total = $this->cart->getTotal();
+        $totalOriginal = $this->cart->getTotal();
         
-         $userBefore = $this->userRepo->findById($userId);
-$previousPoints = $userBefore->loyalty_points ?? 0;
-         $result = $this->purchaseService->processPurchase($userId, $cartItems);
+         $usePoints = isset($_POST['use_points']) && $_POST['use_points'] == '1';
 
-        $_SESSION['last_purchase'] = [
-    'items'           => $cartItems,
-    'total'           => $total,
-    'points_earned'   => $result['points_earned'],
-    'previous_points' => $previousPoints,
-    'new_points'      => $previousPoints + $result['points_earned'],
-    'date'            => date('d/m/Y H:i')
-];
+         $result = $this->purchaseService->processPurchase($userId, $cartItems, $usePoints);
+
+         $userAfter = $this->userRepo->findById($userId);
+
+         $_SESSION['last_purchase'] = [
+            'items'           => $cartItems,
+            'total_original'  => $totalOriginal,
+            'amount_paid'     => $result['amount_paid'],   
+            'points_used'     => $result['points_used'],  
+            'points_earned'   => $result['points_earned'],  
+            'final_balance'   => $userAfter->total_points,  
+            'date'            => date('d/m/Y H:i')
+        ];
 
         $this->cart->clear();
         $this->redirect('shop/purchase-result');
 
     } catch (\Exception $e) {
         $_SESSION['checkout_error'] = $e->getMessage();
-        $this->redirect('shop/checkout');
+       echo "<h1>Error Found:</h1>";
+    echo $e->getMessage();
+    die();
+        
     }
 }
 
