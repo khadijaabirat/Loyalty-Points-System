@@ -4,28 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ShopEasy{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/Loyalty_Points_System/public/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
 <header class="header">
     <div class="container">
-        <a href="/Loyalty_Points_System/public/shop" class="logo">ShopEasy</a>
+        <a href="/Loyalty_Points_System/public/shop" class="logo">
+            <i class="fas fa-shopping-bag"></i>
+            <span>ShopEasy</span>
+        </a>
         <nav class="nav">
             {% if user %}
-                <span class="user-info">
-                    <strong>{{ user.name }}</strong>
-                    <span class="points-badge" title="Votre solde de points">
-                        ⭐ {{  user.total_points|default(0) }} points
-                    </span>
-                </span>
-                <a href="/Loyalty_Points_System/public/logout" class="cart-link" style="margin-left: 10px;">Déconnexion</a>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="user-name">{{ user.name }}</span>
+                    <div class="points-badge">
+                        <i class="fas fa-star"></i>
+                        <span>{{ user.total_points|default(0) }}</span>
+                    </div>
+                </div>
+                <a href="/Loyalty_Points_System/public/logout" class="nav-link logout-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Déconnexion</span>
+                </a>
             {% else %}
-                <a href="/Loyalty_Points_System/public/login">Connexion</a>
+                <a href="/Loyalty_Points_System/public/login" class="nav-link login-link">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Connexion</span>
+                </a>
             {% endif %}
 
             <a href="/Loyalty_Points_System/public/shop/cart" class="cart-link">
-                Panier
+                <i class="fas fa-shopping-cart"></i>
+                <span>Panier</span>
                 {% if cart_count > 0 %}
                     <span class="cart-count">{{ cart_count }}</span>
                 {% endif %}
@@ -42,10 +58,19 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 ShopEasy - Système de test pour formation MVC</p>
-            {% block footer_extra %}
-                <a href="/shop/reset" class="reset-link">Réinitialiser la session</a>
-            {% endblock %}
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>ShopEasy</span>
+                </div>
+                <p class="footer-text">&copy; 2026 ShopEasy. Tous droits réservés.</p>
+                <div class="footer-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            {% block footer_extra %}{% endblock %}
         </div>
     </footer>
 

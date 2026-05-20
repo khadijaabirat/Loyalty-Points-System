@@ -1,66 +1,95 @@
 {% extends './layouts/base.twig' %}
 
-{% block title %}ShopEasy - Panier{% endblock %}
+{% block title %}Mon Panier - ShopEasy{% endblock %}
 
 {% block content %}
-    <h1>Votre Panier</h1>
+    <div class="cart-header">
+        <h1><i class="fas fa-shopping-cart"></i> Votre Panier</h1>
+    </div>
 
     {% if cart_items is empty %}
-        <div class="empty-cart">
-            <p class="empty-cart-icon">Panier vide</p>
-            <p>Votre panier est vide</p>
-            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary">Continuer vos achats</a>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-shopping-basket"></i>
+            </div>
+            <h2>Votre panier est vide</h2>
+            <p>Découvrez nos produits et commencez vos achats</p>
+            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary btn-large">
+                <i class="fas fa-store"></i>
+                <span>Découvrir la boutique</span>
+            </a>
         </div>
     {% else %}
-        <div class="cart-content">
-            <table class="cart-table">
-                <thead>
-                    <tr>
-                        <th>Produit</th>
-                        <th>Prix unitaire</th>
-                        <th>Quantité</th>
-                        <th>Sous-total</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart_items %}
-                        <tr>
-                            <td class="product-name">{{ item.name }}</td>
-                            <td>{{ item.price|number_format(2, '.', ' ') }} $</td>
-                            <td>
-                                <form action="/Loyalty_Points_System/public/shop/update-cart" method="POST" class="update-qty-form">
-                                    <input type="hidden" name="product_id" value="{{ item.id }}">
-                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="99" class="qty-input">
-                                    <button type="submit" class="btn btn-small">Mettre à jour</button>
-                                </form>
-                            </td>
-                            <td class="subtotal">{{ (item.price * item.quantity)|number_format(2, '.', ' ') }} $</td>
-                            <td>
-                                <form action="/Loyalty_Points_System/public/shop/remove-from-cart" method="POST" class="remove-form">
-                                    <input type="hidden" name="product_id" value="{{ item.id }}">
-                                    <button type="submit" class="btn btn-danger btn-small">Supprimer</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="cart-layout">
+            <div class="cart-items-section">
+                {% for item in cart_items %}
+                    <div class="cart-item">
+                        <div class="item-image">
+                            {% if item.image is defined and item.image is not empty %}
+                                <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
+                            {% else %}
+                                <span class="item-icon">📦</span>
+                            {% endif %}
+                        </div>
+                        <div class="item-details">
+                            <h3 class="item-name">{{ item.name }}</h3>
+                            <p class="item-price">{{ item.price|number_format(2, '.', ' ') }} $ / unité</p>
+                        </div>
+                        <form action="/Loyalty_Points_System/public/shop/update-cart" method="POST" class="item-quantity">
+                            <input type="hidden" name="product_id" value="{{ item.id }}">
+                            <label><i class="fas fa-boxes"></i> Quantité</label>
+                            <div class="quantity-controls">
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" max="99">
+                                <button type="submit" class="btn btn-small btn-secondary">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="item-subtotal">
+                            <span class="subtotal-label">Sous-total</span>
+                            <span class="subtotal-amount">{{ (item.price * item.quantity)|number_format(2, '.', ' ') }} $</span>
+                        </div>
+                        <form action="/Loyalty_Points_System/public/shop/remove-from-cart" method="POST" class="item-remove">
+                            <input type="hidden" name="product_id" value="{{ item.id }}">
+                            <button type="submit" class="btn-icon btn-danger">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
 
-            <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Total du panier:</span>
-                    <span class="total-amount">{{ cart_total|number_format(2, '.', ' ') }} $</span>
-                </div>
-                <div class="summary-row points-row">
-                    <span>Points à gagner:</span>
-                    <span class="points-earned">{{ loyalty_points }} points</span>
-                </div>
-                <p class="points-info">10 points par tranche de 100$ dépensés</p>
-                
-                <div class="cart-actions">
-                    <a href="/Loyalty_Points_System/public/shop" class="btn btn-secondary">Continuer mes achats</a>
-                    <a href="/Loyalty_Points_System/public/shop/checkout" class="btn btn-primary btn-large">Passer la commande</a>
+            <div class="cart-summary-section">
+                <div class="summary-card">
+                    <h2><i class="fas fa-receipt"></i> Récapitulatif</h2>
+                    
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span>{{ cart_total|number_format(2, '.', ' ') }} $</span>
+                    </div>
+                    
+                    <div class="summary-row total-row">
+                        <span>Total</span>
+                        <span class="total-amount">{{ cart_total|number_format(2, '.', ' ') }} $</span>
+                    </div>
+                    
+                    <div class="points-info-box">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <strong>{{ loyalty_points }} points</strong>
+                            <p>à gagner avec cet achat</p>
+                        </div>
+                    </div>
+                    
+                    <a href="/Loyalty_Points_System/public/shop/checkout" class="btn btn-primary btn-full btn-large">
+                        <i class="fas fa-lock"></i>
+                        <span>Passer la commande</span>
+                    </a>
+                    
+                    <a href="/Loyalty_Points_System/public/shop" class="btn btn-secondary btn-full">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Continuer mes achats</span>
+                    </a>
                 </div>
             </div>
         </div>

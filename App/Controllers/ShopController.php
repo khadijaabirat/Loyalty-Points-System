@@ -35,8 +35,18 @@ class ShopController
 
      public function index(): void
     {
+        $searchQuery = $_GET['search'] ?? '';
+        $category = $_GET['category'] ?? '';
+        
+        $products = (!empty($searchQuery) || !empty($category)) 
+            ? $this->productRepo->search($searchQuery, $category) 
+            : $this->productRepo->getAll();
+
         echo $this->twig->render('shop/index.html.twig', [
-            'products' => $this->productRepo->getAll(),
+            'products' => $products,
+            'categories' => $this->productRepo->getCategories(),
+            'current_search' => $searchQuery,
+            'current_category' => $category,
             'user' => $this->getCurrentUser(),
             'cart_count' => $this->cart->getCount()
         ]);
@@ -61,7 +71,7 @@ class ShopController
             
             $product = $this->productRepo->findById($id);
             if ($product) {
-                $this->cart->addItem($product['id'], $product['name'], $product['price'], $qty);
+                $this->cart->addItem($product['id'], $product['name'], $product['price'], $product['image'] ?? '', $qty);
             }
         }
 header('Location: /Loyalty_Points_System/public/shop/cart');
@@ -104,16 +114,22 @@ public function processCheckout(): void
         
          $usePoints = isset($_POST['use_points']) && $_POST['use_points'] == '1';
 
+          $userBefore = $this->userRepo->findById($userId);
+         $previousPoints = $userBefore->total_points;
+
          $result = $this->purchaseService->processPurchase($userId, $cartItems, $usePoints);
 
-         $userAfter = $this->userRepo->findById($userId);
+          $userAfter = $this->userRepo->findById($userId);
 
          $_SESSION['last_purchase'] = [
             'items'           => $cartItems,
+            'total'           => $result['amount_paid'],
             'total_original'  => $totalOriginal,
             'amount_paid'     => $result['amount_paid'],   
             'points_used'     => $result['points_used'],  
-            'points_earned'   => $result['points_earned'],  
+            'points_earned'   => $result['points_earned'],
+            'previous_points' => $previousPoints,
+            'new_points'      => $userAfter->total_points,
             'final_balance'   => $userAfter->total_points,  
             'date'            => date('d/m/Y H:i')
         ];
@@ -149,7 +165,11 @@ public function processCheckout(): void
 
  private function getCurrentUser() {
     if (isset($_SESSION['user_id'])) {
-         return $this->userRepo->findById($_SESSION['user_id']);
+        $user = $this->userRepo->findById($_SESSION['user_id']);
+        if ($user) {
+            $user->total_points = (int)$user->total_points;
+        }
+        return $user;
     }
     return null;
 }

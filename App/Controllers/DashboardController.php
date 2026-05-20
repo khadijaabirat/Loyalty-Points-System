@@ -15,10 +15,12 @@ class DashboardController {
     public function index() {
         Auth::requireLogin();
         
-         $user = $this->userRepo->findById($_SESSION['user_id']);
+        $user = $this->userRepo->findById($_SESSION['user_id']);
+        $recentTransactions = $this->userRepo->getRecentTransactions($_SESSION['user_id'], 10);
 
-         echo $this->twig->render('dashboard/index.html.twig', [
-            'user' => $user
+        echo $this->twig->render('dashboard/index.html.twig', [
+            'user' => $user,
+            'recent_transactions' => $recentTransactions
         ]);
     }
 }

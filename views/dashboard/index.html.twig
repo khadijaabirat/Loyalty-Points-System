@@ -1,15 +1,146 @@
 {% extends 'layouts/base.twig' %}
 
+{% block title %}Tableau de bord - {{ user.name }}{% endblock %}
+
 {% block content %}
 <div class="dashboard">
-    <h1>hallo, {{ user.name }}!</h1>
-    
-    <div class="points-card" style="background: #f4f4f4; padding: 20px; border-radius: 10px;">
-        <h3>tes points :</h3>
-        <p style="font-size: 2em; color: green; font-weight: bold;">
-            {{ user.total_points }} point
-        </p>
+    <div class="dashboard-header">
+        <div class="welcome-section">
+            {% set vip_tier = 'Bronze' %}
+            {% set tier_color = '#d97706' %}
+            {% if user.total_points >= 1000 %}
+                {% set vip_tier = 'Platine' %}
+                {% set tier_color = '#e2e8f0' %}
+            {% elseif user.total_points >= 500 %}
+                {% set vip_tier = 'Or' %}
+                {% set tier_color = '#fbbf24' %}
+            {% elseif user.total_points >= 200 %}
+                {% set vip_tier = 'Argent' %}
+                {% set tier_color = '#94a3b8' %}
+            {% endif %}
+
+            <h1 class="dashboard-title">
+                <i class="fas fa-hand-sparkles"></i>
+                Bonjour, {{ user.name }} !
+            </h1>
+            <div style="display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 12px;">
+                <span class="vip-badge" style="background: rgba(255,255,255,0.05); border: 1px solid {{ tier_color }}; color: {{ tier_color }}; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;">
+                    Membre {{ vip_tier }}
+                </span>
+            </div>
+            <p class="dashboard-subtitle" style="margin-top: 12px;">Ravi de vous revoir sur ShopEasy</p>
+        </div>
     </div>
- 
+
+    <div class="dashboard-grid">
+        <div class="stats-card points-card">
+            <div class="card-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="card-content">
+                <h3>Vos Points</h3>
+                <p class="stats-number">{{ user.total_points }}</p>
+                <p class="stats-label">points de fidélité</p>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-info-circle"></i>
+                <span>1 point = 1$</span>
+            </div>
+        </div>
+
+        <div class="stats-card rewards-card">
+            <div class="card-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <div class="card-content">
+                <h3>Récompenses</h3>
+                <p class="stats-number">{{ (user.total_points / 100)|round(0, 'floor') }}</p>
+                <p class="stats-label">achats récompensés</p>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-trophy"></i>
+                <span>10 pts / 100$</span>
+            </div>
+        </div>
+
+        <div class="stats-card savings-card">
+            <div class="card-icon">
+                <i class="fas fa-piggy-bank"></i>
+            </div>
+            <div class="card-content">
+                <h3>Économies</h3>
+                <p class="stats-number">{{ user.total_points|number_format(2) }}$</p>
+                <p class="stats-label">disponibles</p>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-coins"></i>
+                <span>Utilisez vos points</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-cards">
+        <div class="action-card primary-action">
+            <div class="action-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div class="action-content">
+                <h3>Continuer vos achats</h3>
+                <p>Découvrez nos produits et gagnez plus de points</p>
+            </div>
+            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary">
+                <span>Voir la boutique</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="action-card secondary-action">
+            <div class="action-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="action-content">
+                <h3>Programme de fidélité</h3>
+                <p>Gagnez 10 points pour chaque tranche de 100$ dépensés</p>
+            </div>
+            <div class="progress-info">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ (user.total_points % 100) }}%"></div>
+                </div>
+                <span class="progress-text">{{ user.total_points % 100 }}% vers 10 points</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="transactions-section" style="margin-top: 48px;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;"><i class="fas fa-history" style="color: var(--primary-solid);"></i> Historique des points</h2>
+        
+        {% if recent_transactions is empty %}
+            <div class="empty-state" style="padding: 32px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);">
+                <p style="color: var(--text-secondary);">Aucune transaction pour le moment.</p>
+            </div>
+        {% else %}
+            <div class="transactions-list" style="display: flex; flex-direction: column; gap: 12px;">
+                {% for tx in recent_transactions %}
+                    <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); transition: transform 0.2s;">
+                        <div class="tx-info" style="display: flex; align-items: center; gap: 16px;">
+                            <div class="tx-icon" style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: {% if tx.type == 'earned' %}rgba(16,185,129,0.1){% else %}rgba(239,68,68,0.1){% endif %}; color: {% if tx.type == 'earned' %}#10b981{% else %}#ef4444{% endif %}; font-size: 1.2rem;">
+                                {% if tx.type == 'earned' %}<i class="fas fa-arrow-up"></i>{% else %}<i class="fas fa-arrow-down"></i>{% endif %}
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 4px; font-size: 1rem; color: var(--text-primary);">{{ tx.description }}</h4>
+                                <span style="font-size: 0.85rem; color: var(--text-tertiary);">{{ tx.createdat|date('d/m/Y H:i') }}</span>
+                            </div>
+                        </div>
+                        <div class="tx-amount" style="text-align: right;">
+                            <div style="font-weight: 700; font-size: 1.1rem; color: {% if tx.type == 'earned' %}#10b981{% else %}#ef4444{% endif %};">
+                                {% if tx.type == 'earned' %}+{% else %}-{% endif %}{{ tx.amount }} pts
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-tertiary);">Solde: {{ tx.balance_after }} pts</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

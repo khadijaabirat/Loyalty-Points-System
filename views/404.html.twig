@@ -1,6 +1,26 @@
 {% extends 'layouts/base.twig' %}
 
+{% block title %}Page introuvable - ShopEasy{% endblock %}
+
 {% block content %}
-<h2>404 - Page non trouvée</h2>
-<p>La page que vous recherchez n'existe pas.</p>
+<div class="error-page">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Page introuvable</h2>
+        <p class="error-message">Désolé, la page que vous recherchez n'existe pas ou a été déplacée.</p>
+        <div class="error-actions">
+            <a href="/Loyalty_Points_System/public/shop" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                <span>Retour à l'accueil</span>
+            </a>
+            <a href="/Loyalty_Points_System/public/shop/cart" class="btn btn-secondary">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Voir mon panier</span>
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

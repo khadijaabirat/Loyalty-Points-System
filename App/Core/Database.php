@@ -10,7 +10,7 @@ class Database {
     public static function getConnection() {
         if (self::$instance === null) {
             $host = 'localhost';
-            $db   = 'loyalty_points_system';  
+            $db   = 'loyalty_points_db';  
             $user = 'root';     
             $pass = '';           
 

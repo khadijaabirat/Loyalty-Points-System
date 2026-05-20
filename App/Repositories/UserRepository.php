@@ -67,4 +67,11 @@ public function addTransaction($userId, $type, $amount, $description, $balanceAf
         'balance_after' => $balanceAfter
     ]);
 }
+public function getRecentTransactions(int $userId, int $limit = 5): array {
+    $stmt = $this->db->prepare("SELECT * FROM points_transactions WHERE user_id = :id ORDER BY createdat DESC LIMIT :limit");
+     $stmt->bindValue(':id', $userId, PDO::PARAM_INT);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 }

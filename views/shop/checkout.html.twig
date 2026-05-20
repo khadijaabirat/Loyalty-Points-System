@@ -1,72 +1,102 @@
 {% extends './layouts/base.twig' %}
 
-{% block title %}ShopEasy - Paiement{% endblock %}
+{% block title %}Paiement - ShopEasy{% endblock %}
 
 {% block content %}
-    <h1>Finaliser votre commande</h1>
+    <div class="cart-header">
+        <h1><i class="fas fa-credit-card"></i> Finaliser votre commande</h1>
+    </div>
 
     {% if checkout_error %}
         <div class="alert alert-error">
-            {{ checkout_error }}
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{ checkout_error }}</span>
         </div>
     {% endif %}
 
     <div class="checkout-layout">
         <div class="checkout-form-container">
-            <h2>Informations de paiement</h2>
-            <p class="form-note">Simulation de paiement (données non enregistrées)</p>
+            <h2><i class="fas fa-lock"></i> Informations de paiement</h2>
+            <p class="form-note">
+                <i class="fas fa-info-circle"></i>
+                Simulation de paiement - Aucune donnée réelle n'est enregistrée
+            </p>
             
             <form action="/Loyalty_Points_System/public/shop/process-checkout" method="POST" class="checkout-form" id="checkoutForm">
                 <div class="form-group">
-                    <label for="card_name">Nom sur la carte</label>
-                    <input type="text" id="card_name" name="card_name" placeholder="NOM PRENOM" required>
+                    <label for="card_name">
+                        <i class="fas fa-user"></i>
+                        Nom sur la carte
+                    </label>
+                    <input type="text" id="card_name" name="card_name" placeholder="JOHN DOE" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="card_number">Numéro de carte</label>
+                    <label for="card_number">
+                        <i class="fas fa-credit-card"></i>
+                        Numéro de carte
+                    </label>
                     <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19" required>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="card_expiry">Date d'expiration</label>
+                        <label for="card_expiry">
+                            <i class="fas fa-calendar"></i>
+                            Expiration
+                        </label>
                         <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/AA" maxlength="5" required>
                     </div>
                     <div class="form-group">
-                        <label for="card_cvv">CVV</label>
+                        <label for="card_cvv">
+                            <i class="fas fa-shield-alt"></i>
+                            CVV
+                        </label>
                         <input type="text" id="card_cvv" name="card_cvv" placeholder="123" maxlength="4" required>
                     </div>
                 </div>
 
-                 <div class="loyalty-usage-section" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #007bff;">
-                    <h4 style="margin-top: 0; color: #007bff;"> Utiliser vos points ?</h4>
+                <div class="loyalty-usage-section">
+                    <h4>
+                        <i class="fas fa-star"></i>
+                        Utiliser vos points de fidélité
+                    </h4>
                     
                     {% if user.total_points > 0 %}
-                        <div class="form-group-checkbox" style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" id="use_points" name="use_points" value="1" data-points="{{ user.total_points }}" style="width: 20px; height: 20px; cursor: pointer;">
-                            <label for="use_points" style="font-weight: bold; cursor: pointer;">
-                                Utiliser mes <strong>{{ user.total_points }}</strong> points 
+                        <div class="form-group-checkbox">
+                            <input type="checkbox" id="use_points" name="use_points" value="1" data-points="{{ user.total_points }}">
+                            <label for="use_points">
+                                Utiliser mes <strong>{{ user.total_points }}</strong> points
                                 <span class="text-muted">(Réduction de {{ user.total_points|number_format(2) }} $)</span>
                             </label>
                         </div>
                     {% else %}
-                        <p class="text-muted">Vous n'avez pas encore de points à utiliser.</p>
+                        <p class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Vous n'avez pas encore de points disponibles
+                        </p>
                     {% endif %}
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-large btn-full" id="payButton">
-                    Payer <span id="displayTotal">{{ cart_total|number_format(2, '.', ' ') }}</span> $
+                    <i class="fas fa-lock"></i>
+                    <span>Payer <span id="displayTotal">{{ cart_total|number_format(2, '.', ' ') }}</span> $</span>
                 </button>
             </form>
         </div>
 
         <div class="order-summary">
-            <h2>Récapitulatif</h2>
+            <h2><i class="fas fa-receipt"></i> Récapitulatif</h2>
             
             <div class="summary-items">
                 {% for item in cart_items %}
-                    <div class="summary-item">
-                        <span class="item-name">{{ item.name }} x {{ item.quantity }}</span>
+                    <div class="summary-item" style="display: flex; align-items: center; gap: 12px; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            {% if item.image is defined and item.image is not empty %}
+                                <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover;">
+                            {% endif %}
+                            <span class="item-name">{{ item.name }} x {{ item.quantity }}</span>
+                        </div>
                         <span class="item-price">{{ (item.price * item.quantity)|number_format(2, '.', ' ') }} $</span>
                     </div>
                 {% endfor %}
@@ -74,28 +104,31 @@
 
             <div class="summary-totals">
                 <div class="summary-row total-row">
-                    <span>Total:</span>
+                    <span>Total</span>
                     <span class="total-amount">{{ cart_total|number_format(2, '.', ' ') }} $</span>
                 </div>
                 <div class="summary-row points-row highlight">
-                    <span>Points à gagner:</span>
+                    <span><i class="fas fa-star"></i> Points à gagner</span>
                     <span class="points-earned">{{ loyalty_points }} points</span>
                 </div>
             </div>
 
             <div class="current-balance">
-                <p>Votre solde actuel: <strong>{{ user.total_points }} points</strong></p>
-                <p>Après cet achat: <strong>{{ user.total_points + loyalty_points }} points</strong></p>
+                <p><i class="fas fa-wallet"></i> Solde actuel: <strong>{{ user.total_points }} points</strong></p>
+                <p><i class="fas fa-chart-line"></i> Après achat: <strong>{{ user.total_points + loyalty_points }} points</strong></p>
             </div>
 
-            <a href="/Loyalty_Points_System/public/shop/cart" class="btn btn-secondary btn-full">Modifier le panier</a>
+            <a href="/Loyalty_Points_System/public/shop/cart" class="btn btn-secondary btn-full">
+                <i class="fas fa-edit"></i>
+                <span>Modifier le panier</span>
+            </a>
         </div>
     </div>
 {% endblock %}
 
 {% block footer_extra %}
 <script>
-     const checkbox = document.getElementById('use_points');
+    const checkbox = document.getElementById('use_points');
     const displayTotal = document.getElementById('displayTotal');
     const originalTotal = parseFloat("{{ cart_total }}");
 

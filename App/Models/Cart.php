@@ -3,7 +3,7 @@ namespace App\Models;
 class Cart
 {
 
-    public function addItem(int $productId, string $name, float $price, int $quantity = 1): void
+    public function addItem(int $productId, string $name, float $price, string $image = '', int $quantity = 1): void
     {
         if ($quantity <= 0) {
             return;
@@ -16,6 +16,7 @@ class Cart
                 'id' => $productId,
                 'name' => $name,
                 'price' => $price,
+                'image' => $image,
                 'quantity' => $quantity
             ];
         }
